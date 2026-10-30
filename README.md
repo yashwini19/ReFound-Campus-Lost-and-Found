@@ -38,7 +38,7 @@ within their campus.
 
 ### 1. Clone the repository
 
-git clone https://github.com/YOUR_USERNAME/ReFound-Campus-Lost-and-Found.git
+git clone https://github.com/yashwini19/ReFound-Campus-Lost-and-Found.git
 
 ### 2. Backend setup
 
