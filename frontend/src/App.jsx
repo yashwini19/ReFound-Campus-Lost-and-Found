@@ -1,33 +1,85 @@
 
 import { useEffect, useState } from "react";
+import Auth from "./Auth";
+import Dashboard from "./Dashboard";
 import "./App.css";
 
 function App() {
-  // Load the previously selected theme.
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("refound-theme") || "light"
-  );
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("refoundUser")) || null;
+    } catch {
+      return null;
+    }
+  });
 
-  // Apply the theme and remember the user's choice.
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("refoundTheme");
+
+    return savedTheme === "light" || savedTheme === "dark"
+      ? savedTheme
+      : "light";
+  });
+
+  // Apply and save theme
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("refound-theme", theme);
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    localStorage.setItem("refoundTheme", theme);
   }, [theme]);
 
-  // Switch between light and dark mode.
-  function toggleTheme() {
-    setTheme((current) => (current === "light" ? "dark" : "light"));
+  // Toggle light and dark themes
+  const toggleTheme = () => {
+    setTheme((previous) =>
+      previous === "dark" ? "light" : "dark"
+    );
+  };
+
+  // Open login or registration
+  const openAuth = (mode) => {
+    setAuthMode(mode);
+    setShowAuth(true);
+  };
+
+  // Handle successful login or registration
+  const handleAuthenticated = (user) => {
+    localStorage.setItem("refoundUser", JSON.stringify(user));
+    setCurrentUser(user);
+    setShowAuth(false);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("refoundToken");
+    localStorage.removeItem("refoundUser");
+    setCurrentUser(null);
+    setShowAuth(false);
+    setAuthMode("login");
+  };
+
+  // Show dashboard after authentication
+  if (currentUser) {
+    return (
+      <Dashboard
+        user={currentUser}
+        onLogout={handleLogout}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+    );
   }
 
   return (
-    <div className="app">
-      {/* Navigation */}
+    <div className="landing-page" id="home">
+
+      {/* NAVIGATION */}
       <header className="navbar">
-        <a className="brand" href="#home">
-          <span className="brand-icon">✦</span>
-          <span>
-            ReFound<span className="brand-dot">.</span>
-          </span>
+        <a href="#home" className="brand">
+          <span className="brand-icon">R</span>
+          ReFound
         </a>
 
         <nav className="nav-links">
@@ -40,233 +92,259 @@ function App() {
           <button
             className="theme-button"
             onClick={toggleTheme}
-            aria-label={`Switch to ${
-              theme === "light" ? "dark" : "light"
-            } mode`}
-            title="Change theme"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            type="button"
           >
-            {theme === "light" ? "☾" : "☀"}
+            {theme === "dark" ? "☀️" : "🌙"}
           </button>
 
-          <a className="login-link" href="#get-started">
+          <button
+            className="button button-outline"
+            onClick={() => openAuth("login")}
+            type="button"
+          >
             Log in
-          </a>
+          </button>
 
-          <a className="button button-small" href="#get-started">
-            Get started <span>↗</span>
-          </a>
+          <button
+            className="button button-primary"
+            onClick={() => openAuth("register")}
+            type="button"
+          >
+            Get started
+          </button>
         </div>
       </header>
 
       <main>
-        {/* Hero section */}
-        <section className="hero" id="home">
+
+        {/* HERO SECTION */}
+        <section className="hero">
           <div className="hero-content">
-            <div className="announcement">
-              <span className="announcement-dot" />
-              A smarter way to reunite with what matters
+            <div className="eyebrow">
+              <span className="eyebrow-star">✦</span>
+              SMART CAMPUS LOST & FOUND
             </div>
 
             <h1>
               Lost something?
-              <br />
               <span>Let's find it.</span>
             </h1>
 
             <p className="hero-description">
-              A little less worrying. A little more finding.
-              Discover lost belongings, connect with finders,
-              and bring your important things back home.
+              A smarter way to reconnect people with their lost belongings.
+              Report, discover, verify, and return items through one trusted
+              campus platform.
             </p>
 
             <div className="hero-actions">
-              <a className="button" href="#get-started">
-                Find my item <span>→</span>
-              </a>
+              <button
+                className="button button-primary hero-button"
+                onClick={() => openAuth("register")}
+                type="button"
+              >
+                Get started <span>→</span>
+              </button>
 
-              <a className="secondary-button" href="#features">
-                Explore the platform <span>↗</span>
-              </a>
+              <button
+                className="button button-secondary hero-button"
+                onClick={() => openAuth("login")}
+                type="button"
+              >
+                Find my item
+              </button>
             </div>
 
-            <div className="trust-note">
-              <span className="trust-icon">✓</span>
-              Built for campus communities. Designed for trust.
+            <div className="trust-line">
+              <span>✦</span>
+              Built for safer and smarter campus communities
             </div>
           </div>
 
-          {/* Decorative sample item card */}
+          {/* FEATURE CARD */}
           <div className="hero-visual">
-            <div className="visual-glow" />
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
+            <div className="floating-decoration decoration-one">✦</div>
+            <div className="floating-decoration decoration-two">✧</div>
 
-            <div className="floating-label label-top">
-              <span className="label-icon">✦</span>
-              Smart matching
-            </div>
-
-            <div className="item-card">
-              <div className="item-card-top">
-                <span className="item-status">
-                  <span /> SAMPLE MATCH
-                </span>
-                <span className="item-menu">•••</span>
+            <div className="found-card">
+              <div className="card-top">
+                <span className="card-label">RECENTLY FOUND</span>
+                <span className="live-dot"></span>
               </div>
 
-              <div className="item-illustration">
-                <div className="item-circle">🎒</div>
-              </div>
+              <div className="item-icon">🎒</div>
 
-              <div className="item-info">
-                <span className="item-category">
-                  PERSONAL BELONGINGS
-                </span>
-                <h3>Blue backpack</h3>
-                <p>Library · Sample report</p>
-              </div>
+              <h3>Black Backpack</h3>
 
-              <div className="match-box">
-                <div>
-                  <span className="match-label">
-                    Potential match
-                  </span>
-                  <strong>Similarity preview</strong>
-                </div>
-                <span className="match-symbol">✧</span>
-              </div>
+              <p className="item-location">
+                <span>📍</span> Found near the library
+              </p>
 
-              <div className="card-footer">
-                <span>◉ Campus community</span>
-                <span className="secure-label">
-                  ♢ Private verification
-                </span>
+              <div className="item-card-footer">
+                <span>Today</span>
+                <button
+                  onClick={() => openAuth("login")}
+                  type="button"
+                >
+                  View report <span>↗</span>
+                </button>
               </div>
             </div>
 
-            <div className="floating-label label-bottom">
-              <span className="verified-icon">✓</span>
-              Ownership matters
+            <div className="floating-note">
+              <span className="note-icon">✓</span>
+              <div>
+                <strong>One campus. One community.</strong>
+                <small>
+                  Helping belongings find their way home.
+                </small>
+              </div>
             </div>
-
-            <div className="sparkle sparkle-one">✦</div>
-            <div className="sparkle sparkle-two">✧</div>
-            <div className="sparkle sparkle-three">✦</div>
           </div>
         </section>
 
-        {/* Features */}
+        {/* FEATURES */}
         <section className="features-section" id="features">
           <div className="section-heading">
-            <span className="eyebrow">MORE THAN LOST & FOUND</span>
-            <h2>
-              Finding things, made <span>smarter.</span>
-            </h2>
+            <span className="section-eyebrow">WHY REFOUND?</span>
+            <h2>Lost items. Found connections.</h2>
             <p>
-              Thoughtful technology. A safer way to reconnect.
+              Everything your campus needs to make lost and found simple.
             </p>
           </div>
 
-          <div className="feature-grid">
+          <div className="features-grid">
             <article className="feature-card">
-              <div className="feature-icon purple-icon">✧</div>
-              <h3>Smart item matching</h3>
+              <div className="feature-icon">🔎</div>
+              <h3>Easy discovery</h3>
               <p>
-                Discover similar reports using descriptions,
-                categories, dates, and locations.
+                Browse reported belongings and find items that match
+                what you've lost.
               </p>
-              <span className="feature-number">01 / DISCOVER</span>
             </article>
 
             <article className="feature-card">
-              <div className="feature-icon blue-icon">⌖</div>
-              <h3>Campus-aware search</h3>
+              <div className="feature-icon">📦</div>
+              <h3>Quick reporting</h3>
               <p>
-                Search relevant reports and narrow down
-                where your belongings may be.
+                Report lost or found belongings with useful details
+                and descriptions.
               </p>
-              <span className="feature-number">02 / LOCATE</span>
             </article>
 
             <article className="feature-card">
-              <div className="feature-icon green-icon">♢</div>
-              <h3>Trust comes first</h3>
+              <div className="feature-icon">🤝</div>
+              <h3>Safe reunions</h3>
               <p>
-                Private ownership checks help make returns
-                safer and more reliable.
+                Help students reconnect with their belongings through
+                a trusted campus community.
               </p>
-              <span className="feature-number">03 / VERIFY</span>
             </article>
           </div>
         </section>
 
-        {/* How it works */}
+        {/* HOW IT WORKS */}
         <section className="how-section" id="how-it-works">
-          <div className="how-content">
-            <span className="eyebrow">SIMPLE BY DESIGN</span>
-            <h2>
-              From lost to <span>found.</span>
-            </h2>
+          <div className="section-heading">
+            <span className="section-eyebrow">SIMPLE PROCESS</span>
+            <h2>Three steps to find it.</h2>
             <p>
-              Every step brings your belongings closer to home.
+              Getting belongings back should never be complicated.
             </p>
           </div>
 
           <div className="steps-grid">
-            <div className="step">
+            <div className="step-card">
               <span className="step-number">01</span>
-              <h3>Report an item</h3>
-              <p>Share what was lost or what you found.</p>
+              <h3>Report</h3>
+              <p>
+                Submit details about an item you've lost or found.
+              </p>
             </div>
 
-            <div className="step">
+            <div className="step-card">
               <span className="step-number">02</span>
-              <h3>Discover a match</h3>
-              <p>Review similar reports and their details.</p>
+              <h3>Discover</h3>
+              <p>
+                Explore reports and look for matching belongings.
+              </p>
             </div>
 
-            <div className="step">
+            <div className="step-card">
               <span className="step-number">03</span>
-              <h3>Verify and reunite</h3>
-              <p>Confirm ownership before arranging a return.</p>
+              <h3>Reconnect</h3>
+              <p>
+                Verify the item and help it return to its owner.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Call to action */}
-        <section className="cta-section" id="get-started">
+        {/* CALL TO ACTION */}
+        <section className="cta-section">
           <div>
-            <span className="eyebrow">YOUR CAMPUS, CONNECTED</span>
-            <h2>Every lost thing deserves a chance.</h2>
-            <p>Let's make finding it a little easier.</p>
+            <span className="section-eyebrow">
+              READY TO GET STARTED?
+            </span>
+            <h2>Let's bring lost things back home.</h2>
+            <p>Join your campus community on ReFound.</p>
           </div>
 
           <button
-            className="button"
-            onClick={() =>
-              alert(
-                "Welcome to ReFound! Registration will be added next."
-              )
-            }
+            className="button button-primary cta-button"
+            onClick={() => openAuth("register")}
+            type="button"
           >
-            Get started <span>→</span>
+            Join ReFound <span>→</span>
           </button>
         </section>
+
       </main>
 
-      {/* Footer */}
+      {/* FOOTER */}
       <footer className="footer">
-        <a className="brand" href="#home">
-          <span className="brand-icon">✦</span>
-          <span>
-            ReFound<span className="brand-dot">.</span>
-          </span>
+        <a href="#home" className="brand">
+          <span className="brand-icon">R</span>
+          ReFound
         </a>
 
-        <p>Thoughtfully built to bring things back together.</p>
+        <p>
+          Making campus life a little less forgetful. © 2026 ReFound.
+        </p>
 
-        <span>© 2026 ReFound · Smart Lost & Found</span>
+        <a href="#home">Back to top ↑</a>
       </footer>
+
+      {/* LOGIN / REGISTER MODAL */}
+      {showAuth && (
+        <div
+          className="auth-overlay"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setShowAuth(false);
+            }
+          }}
+        >
+          <div className="auth-modal">
+            <button
+              className="auth-close"
+              onClick={() => setShowAuth(false)}
+              aria-label="Close"
+              type="button"
+            >
+              ×
+            </button>
+
+            <Auth
+              onClose={() => setShowAuth(false)}
+              initialMode={authMode}
+              onAuthenticated={handleAuthenticated}
+            />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

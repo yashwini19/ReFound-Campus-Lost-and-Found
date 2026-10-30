@@ -1,0 +1,133 @@
+/* REFOUND AUTHENTICATION */
+
+.auth-container {
+  width: 100%;
+  color: var(--text, #f6f7ff);
+  padding: 20px 10px;
+}
+
+.auth-container h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.auth-container p {
+  color: var(--muted, #a4aec5);
+  margin-bottom: 22px;
+  line-height: 1.6;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-container label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.auth-container input,
+.auth-container select,
+.auth-container textarea {
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: 9px;
+  border: 1px solid var(--border, #303952);
+  background: var(--bg, #090d1b);
+  color: var(--text, #fff);
+  outline: none;
+  font-size: 14px;
+  transition: border .2s;
+}
+
+.auth-container input:focus,
+.auth-container select:focus,
+.auth-container textarea:focus {
+  border-color: #a78bfa;
+}
+
+.auth-container input::placeholder {
+  color: #858da4;
+}
+
+.auth-container button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  color: white;
+  background: linear-gradient(135deg, #a78bfa, #8055e9);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.auth-container button[type="submit"]:hover {
+  transform: translateY(-2px);
+}
+
+.auth-container button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.auth-container .auth-switch {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-container .auth-switch button {
+  border: none;
+  background: none;
+  color: #a78bfa;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-container .error-message {
+  color: #fb7185;
+  font-size: 13px;
+}
+
+.auth-container .success-message {
+  color: #4ade80;
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 15px 5px;
+  }
+
+  .auth-container h2 {
+    font-size: 24px;
+  }
+}
+.auth-heading {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.auth-logo {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #a78bfa, #7045df);
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.auth-container .auth-heading p {
+  margin-bottom: 0;
+}
